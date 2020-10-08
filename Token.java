@@ -26,12 +26,11 @@ import java.io.FileNotFoundException;
 
 public class Token 
 {
-    Ident idType;       //enum 
-    Keyword keyType;
-    Separator sepType;
-    Operator opType;
-    Literal litType;
+    Enum tokenType;
     String value;
+    static int numOfTokens = 0;
+    int tokenNum;
+    int tokenCode
 
     enum Ident      //enum (mini class) for identifiers
     {
@@ -91,85 +90,89 @@ public class Token
 
     }
 
-    //Identifier Token Constructor
-    Token(Ident type, String scanned)
+    //Token Constructor
+    Token(Enum type, String scanned)
     {
-        idType = type;
-        value = scanned;        
-    }
-
-    //Keyword Token Constructor
-    Token(Keyword type, String scanned)
-    {
-        keyType = type;
+        tokenType = type;
         value = scanned;
+        numOfTokens++; 
+        tokenNum = numOfTokens;       
     }
 
-    //Separator Token Constructor
-    Token(Separator type, String scanned)
-    {
-        sepType = type;
-        value = scanned;
-    }
+   
 
-    //Operator Token Constructor
-    Token(Operator type, String scanned)
-    {
-        opType = type;
-        value = scanned;
-    }
+    //https://stackoverflow.com/questions/7732666/printing-out-characters-in-ada
+    //May help with keywords ^^^
 
-    //Literal Token Constructor
-    Token(Literal type, String scanned)
-    {
-        litType = type;
-        value = scanned;
-    }
-
-    //returns list of tokens
+    //returns list of all tokens
     public static List<Token> getTokens(Scanner scan)
     {
         List<Token> tokens = new ArrayList<Token>();
-       
+        String next = "";
+
         while(scan.hasNext())
         {
-            String next = scan.next();      //each token, starting to think I should scan one character at a time
+            next = scan.next();      //each token, starting to think I should scan one character at a time
+            
             if(scan.hasNext() == false)     //special cases like literals
             {
                 System.out.println("End of File");
                 tokens.add(new Token(Keyword.EOF, "End of File"));
             }
-            //switch for everything except literals
-            switch(next)
+            else 
             {
-                //Identifiers
-                case "int":
-                    System.out.println("scan.next(): " + next);
-                    tokens.add(new Token(Ident.INT, next));
+                
+                // switch for everything except literals
+                switch (next) {
+                    // Identifiers
+                    case "int":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Ident.INT, next));
 
-                //Keywords
-                case "if":
-                    System.out.println("scan.next(): " + next);
-                    tokens.add(new Token(Keyword.IF, next));
-                //Separators
-                case "=":
-                    System.out.println("scan.next(): " + next);
-                    tokens.add(new Token(Separator.ASSIGN, next));
-                //Operators    
-                case "+":
-                    System.out.println("scan.next(): " + next);
-                    tokens.add(new Token(Operator.ADD, next));
-                case "2":
-                    System.out.println("scan.next(): " + next);
-                    tokens.add(new Token(Literal.LIT_NUM, next));
-                default:
-                System.out.println("Token not recognized: " + next);
-                tokens.add(new Token(Keyword.NOT_REC, next));
+                        // Keywords
+                    case "if":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Keyword.IF, next));
+                        // Separators
+                    case "=":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Separator.ASSIGN, next));
+                    case ";":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Separator.SEMICOLON, next));
+                    case ":":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Separator.ASSOC, next));
+                        // Operators
+                    case "+":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Operator.ADD, next));
+                    case "2":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Literal.LIT_NUM, next));
+                    default:
+                        System.out.println("Token not recognized: " + next);
+                        tokens.add(new Token(Keyword.NOT_REC, next));
+
+                }
                 
             }
-
         }
         return tokens;
+    }
+
+    public static void printTokens(Scanner scan)
+    {
+        System.out.println("TOKENS SCANNED: ");
+
+        System.out.printf("%-15s%-15s%-15s%s", "Token Number:", "Token Type:", "Token Code:", "Token Value:");  //%-15 pads the string to the right
+
+        List<Token> tokens = getTokens(scan);
+
+        for(Token x: tokens)
+        {
+            System.out.printf("%-15s%-15s%s", x.tokenNum, x.tType, x.value);
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException
@@ -186,6 +189,7 @@ public class Token
         */
         
         getTokens(scan);
+        printTokens(scan);
 
 
         scan.close();
