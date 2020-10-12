@@ -26,11 +26,18 @@ import java.io.FileNotFoundException;
 
 public class Token 
 {
+    /*token type could be incorporated with an array
+        like int types[5]
+        where each index in array is associated with a token type.
+        Upon instantiation, check for which spot in array has a 1 value (others 0)
+        use the spot to decide what the token type is. If/else statements should work. 
+        This allows for easier printing of the token type.
+    */
     Enum tokenType;
     String value;
     static int numOfTokens = 0;
     int tokenNum;
-    int tokenCode
+    int tokenCode;
 
     enum Ident      //enum (mini class) for identifiers
     {
@@ -91,10 +98,11 @@ public class Token
     }
 
     //Token Constructor
-    Token(Enum type, String scanned)
+    Token(Enum type, int code, String scanned)
     {
         tokenType = type;
         value = scanned;
+        tokenCode = code;
         numOfTokens++; 
         tokenNum = numOfTokens;       
     }
@@ -111,13 +119,21 @@ public class Token
         String next = "";
 
         while(scan.hasNext())
-        {
+        {   
+            /*if(scan.hasNextInt())
+            {
+                next = scan.next();
+                System.out.println("Token: " + next);
+                tokens.add(new Token(Literal.LIT_NUM, 401, next));
+                continue;
+            }*/
             next = scan.next();      //each token, starting to think I should scan one character at a time
             
             if(scan.hasNext() == false)     //special cases like literals
             {
                 System.out.println("End of File");
-                tokens.add(new Token(Keyword.EOF, "End of File"));
+                tokens.add(new Token(Keyword.EOF, 111, "End of File"));
+                break;
             }
             else 
             {
@@ -127,32 +143,30 @@ public class Token
                     // Identifiers
                     case "int":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Ident.INT, next));
+                        tokens.add(new Token(Ident.INT, 001, next));
 
                         // Keywords
                     case "if":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Keyword.IF, next));
+                        tokens.add(new Token(Keyword.IF, 101, next));
                         // Separators
                     case "=":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.ASSIGN, next));
+                        tokens.add(new Token(Separator.ASSIGN, 204, next));
                     case ";":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.SEMICOLON, next));
+                        tokens.add(new Token(Separator.SEMICOLON, 203, next));
                     case ":":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.ASSOC, next));
+                        tokens.add(new Token(Separator.ASSOC, 206, next));
                         // Operators
                     case "+":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Operator.ADD, next));
-                    case "2":
-                        System.out.println("Token: " + next);
-                        tokens.add(new Token(Literal.LIT_NUM, next));
+                        tokens.add(new Token(Operator.ADD, 301, next));
+                        
                     default:
                         System.out.println("Token not recognized: " + next);
-                        tokens.add(new Token(Keyword.NOT_REC, next));
+                        tokens.add(new Token(Keyword.NOT_REC, 110, next));
 
                 }
                 
@@ -163,17 +177,17 @@ public class Token
 
     public static void printTokens(Scanner scan)
     {
-        System.out.println("TOKENS SCANNED: ");
-
-        System.out.printf("%-15s%-15s%-15s%s", "Token Number:", "Token Type:", "Token Code:", "Token Value:");  //%-15 pads the string to the right
-
         List<Token> tokens = getTokens(scan);
+
+        System.out.println("TOKENS SCANNED: ");
+        System.out.printf("%-15s%-15s%-15s%s\n", "Token Number:", "Token Type:", "Token Code:", "Token Value:");  //%-15 pads the string to the right
 
         for(Token x: tokens)
         {
-            System.out.printf("%-15s%-15s%s", x.tokenNum, x.tType, x.value);
+            System.out.printf("%-15s%-15s%03d%15s%n", x.tokenNum, x.tokenType, x.tokenCode, x.value);
         }
     }
+    
 
     public static void main(String[] args) throws FileNotFoundException
     {
@@ -188,7 +202,7 @@ public class Token
         System.out.println("First Keyword: " + Keyword.values()[0].code);
         */
         
-        getTokens(scan);
+        //getTokens(scan);
         printTokens(scan);
 
 
