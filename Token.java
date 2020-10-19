@@ -146,13 +146,15 @@ public class Token
                         tokens.add(new Token(Ident.INT, 001, next));
 
                         // Keywords
-                    case "if":
+                   /* case "if":
                         System.out.println("Token: " + next);
                         tokens.add(new Token(Keyword.IF, 101, next));
+                        */
+
                         // Separators
-                    case "=":
+                    case ":=":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.ASSIGN, 204, next));
+                        tokens.add(new Token(Separator.ASSIGN, 308, next));
                     case ";":
                         System.out.println("Token: " + next);
                         tokens.add(new Token(Separator.SEMICOLON, 203, next));
@@ -163,6 +165,10 @@ public class Token
                     case "+":
                         System.out.println("Token: " + next);
                         tokens.add(new Token(Operator.ADD, 301, next));
+                    case "=":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Token(Operator.EQUAL_TO, 204, next));
+                
                         
                     default:
                         System.out.println("Token not recognized: " + next);
@@ -204,9 +210,29 @@ public class Token
         
         //getTokens(scan);
         printTokens(scan);
+        
+        /*File testInput = new File("testInput.txt");
+        Scanner test = new Scanner(testInput);
 
-
+        String next = "";
+        while(test.hasNext());
+        {
+            //next = test.next();
+           
+            System.out.println(test.next());
+        }
+        test.close();
+    
+*/
+/*while(scan.hasNext());
+{
+    //next = test.next();
+   
+    System.out.println(scan.next());
+}
+*/
         scan.close();
+        
         
     }
 
