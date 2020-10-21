@@ -141,14 +141,14 @@ public class Token
                 tokens.add(new Literal(401, next));
                 continue;
             }
-        }
-/*
+        
+
             next = scan.next();      //each token, starting to think I should scan one character at a time
             
             if(scan.hasNext() == false)     //special cases like literals
             {
                 System.out.println("End of File");
-                tokens.add(new Token(Keyword.EOF, 111, "End of File"));
+                tokens.add(new Keyword(111, "End of File"));
                 break;
             }
             else 
@@ -159,42 +159,48 @@ public class Token
                     // Identifiers
                     case "int":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Ident.INT, 001, next));
+                        tokens.add(new Type(001, next));
+                        break;
 
                         // Keywords
-                   /* case "if":
+                    case "if":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Keyword.IF, 101, next));
-                        */
-/*
+                        tokens.add(new Keyword(101, next));
+                        break;
+                        
                         // Separators
                     case ":=":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.ASSIGN, 308, next));
+                        tokens.add(new Separator(304, next));
+                        break;
                     case ";":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.SEMICOLON, 203, next));
+                        tokens.add(new Separator(203, next));
+                        break;
                     case ":":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Separator.ASSOC, 206, next));
+                        tokens.add(new Separator(206, next));
+                        break;
                         // Operators
                     case "+":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Operator.ADD, 301, next));
+                        tokens.add(new Operator(301, next));
+                        break;
                     case "=":
                         System.out.println("Token: " + next);
-                        tokens.add(new Token(Operator.EQUAL_TO, 204, next));
+                        tokens.add(new Operator(308, next));
+                        break;
                 
                         
                     default:
                         System.out.println("Token not recognized: " + next);
-                        tokens.add(new Token(Keyword.NOT_REC, 110, next));
+                        tokens.add(new Keyword(110, next));
 
                 }
                 
             }
         }
-        */
+        
         return tokens;
     }
 
@@ -220,6 +226,8 @@ public class Token
         //Create File and Scanner
         File input = new File("AdaInput.txt");
         Scanner scan = new Scanner(input);
+
+        getTokens(scan);
 
         //testing how to print values
         /*
