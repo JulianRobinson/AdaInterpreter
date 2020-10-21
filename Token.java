@@ -55,6 +55,7 @@ public class Token
         tokenNum = numOfTokens;       
     }
 
+    //These are just here for token number references. Will need to update table
     enum TypeEnum      //enum (mini class) for identifiers *** Actually called types ***
     {
         INT (001), FLOAT (002), STRING (003), BOOLEAN (004);
@@ -134,18 +135,30 @@ public class Token
 
         while(scan.hasNext())
         {   
+            // Literals (special cases)
+            
+
             if(scan.hasNextInt())
             {
                 next = scan.next();
                 System.out.println("Token: " + next);
                 tokens.add(new Literal(401, next));
                 continue;
-            }
+            } // float in else if because ints in java can also be scanned as floats, so handle ints first
+            else if(scan.hasNextFloat())
+                {
+                next = scan.next();
+                System.out.println("Token: " + next);
+                tokens.add(new Literal(402, next));
+                continue;
+                }
+
+            
         
 
             next = scan.next();      //each token, starting to think I should scan one character at a time
             
-            if(scan.hasNext() == false)     //special cases like literals
+            if(scan.hasNext() == false)     //End of file
             {
                 System.out.println("End of File");
                 tokens.add(new Keyword(111, "End of File"));
@@ -191,12 +204,13 @@ public class Token
                         tokens.add(new Operator(308, next));
                         break;
                 
-                        // Identifiers
-                        // Parser may have to handle this
+                        
+                        // Parser may have to handle determining which strings are identifiers
+                        // Also which strings are characters
                     default:
                         System.out.println("Token not recognized (string): " + next);
                         //possibly put string type in default, and have not recognized in special case before/after switch or vice versa
-                        tokens.add(new Keyword(110, next));
+                        tokens.add(new Literal(404, next));
 
                 }
                 
@@ -237,36 +251,7 @@ public class Token
 
         printTokens(scan);
 
-        //testing how to print values
-        /*
-        System.out.println("First Identifier (Ident.values()[0]): " + Ident.values()[0]);
-        System.out.println(String.format("%s%03d", "Using string.format to ensure 3 digits for Ident code: ", Ident.values()[0].code));
-        System.out.println("First Keyword: " + Keyword.values()[0].code);
-        */
-        
-        //getTokens(scan);
-        //printTokens(scan);
-        
-        /*File testInput = new File("testInput.txt");
-        Scanner test = new Scanner(testInput);
-
-        String next = "";
-        while(test.hasNext());
-        {
-            //next = test.next();
-           
-            System.out.println(test.next());
-        }
-        test.close();
-    
-*/
-/*while(scan.hasNext());
-{
-    //next = test.next();
-   
-    System.out.println(scan.next());
-}
-*/
+       
         scan.close();
 
         
