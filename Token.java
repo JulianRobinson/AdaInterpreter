@@ -55,11 +55,11 @@ public class Token
         tokenNum = numOfTokens;       
     }
 
-    enum Ident      //enum (mini class) for identifiers *** Actually called types ***
+    enum TypeEnum      //enum (mini class) for identifiers *** Actually called types ***
     {
         INT (001), FLOAT (002), STRING (003), BOOLEAN (004);
         private final int code;
-        Ident(int tkCode)
+        TypeEnum(int tkCode)
         {
         code = tkCode;
         }
@@ -156,7 +156,7 @@ public class Token
                 
                 // switch for everything except literals
                 switch (next) {
-                    // Identifiers
+                        // Types
                     case "int":
                         System.out.println("Token: " + next);
                         tokens.add(new Type(001, next));
@@ -191,9 +191,11 @@ public class Token
                         tokens.add(new Operator(308, next));
                         break;
                 
-                        
+                        // Identifiers
+                        // Parser may have to handle this
                     default:
-                        System.out.println("Token not recognized: " + next);
+                        System.out.println("Token not recognized (string): " + next);
+                        //possibly put string type in default, and have not recognized in special case before/after switch or vice versa
                         tokens.add(new Keyword(110, next));
 
                 }
@@ -205,20 +207,26 @@ public class Token
     }
 
     
-/*    
+    
     public static void printTokens(Scanner scan)
     {
         List<Token> tokens = getTokens(scan);
 
         System.out.println("TOKENS SCANNED: ");
-        System.out.printf("%-15s%-15s%-15s%s\n", "Token Number:", "Token Type:", "Token Code:", "Token Value:");  //%-15 pads the string to the right
+        /*
+            %-15 pads the string to the right with 15 spaces
+            %15 pads the string to the left
+            %03d pads integer with 0s
+            %n is newline
+        */
+        System.out.printf("%-15s %-15s %-15s %-15s %n", "Token Number:", "Token Type:", "Token Code:", "Token Value:");  
 
         for(Token x: tokens)
         {
-            System.out.printf("%-15s%-15s%03d%15s%n", x.tokenNum, x.tokenType, x.tokenCode, x.value);
+            System.out.printf("%-15s %-15s %03d %11s %-15s %n", x.tokenNum, x.tokenType, x.tokenCode, "", x.value);
         }
     }
-*/
+
     
 
     public static void main(String[] args) throws FileNotFoundException
@@ -227,7 +235,7 @@ public class Token
         File input = new File("AdaInput.txt");
         Scanner scan = new Scanner(input);
 
-        getTokens(scan);
+        printTokens(scan);
 
         //testing how to print values
         /*
@@ -313,6 +321,16 @@ class Literal extends Token
     Literal(int code, String scanned)
     {
         tokenType = "Literal";
+        tokenCode = code;
+        value = scanned;
+    }
+}
+
+class Ident extends Token
+{
+    Ident(int code, String scanned)
+    {
+        tokenType = "Identifier";
         tokenCode = code;
         value = scanned;
     }
