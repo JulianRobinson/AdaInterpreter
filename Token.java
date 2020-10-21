@@ -33,13 +33,29 @@ public class Token
         use the spot to decide what the token type is. If/else statements should work. 
         This allows for easier printing of the token type.
     */
-    Enum tokenType;
-    String value;
+    
     static int numOfTokens = 0;
     int tokenNum;
+    String value;
     int tokenCode;
+    String tokenType = null;
 
-    enum Ident      //enum (mini class) for identifiers
+    Token()
+    {
+        numOfTokens++;
+        tokenNum = numOfTokens;
+    }
+    //Token Constructor
+    Token(int code, String scanned)
+    {
+        
+        value = scanned;
+        tokenCode = code;
+        numOfTokens++; 
+        tokenNum = numOfTokens;       
+    }
+
+    enum Ident      //enum (mini class) for identifiers *** Actually called types ***
     {
         INT (001), FLOAT (002), STRING (003), BOOLEAN (004);
         private final int code;
@@ -49,30 +65,30 @@ public class Token
         }
     }
 
-    enum Keyword      //enum (mini class) for keywords
+    enum KeywordEnum      //enum (mini class) for keywords
     {   
         IF (101), ELSE (102), THEN (103), END (104), CONSTANT (105),
         EXIT (106), WHILE (107), LOOP (108), FOR (109), NOT_REC(110), 
         EOF(111);
         private final int code;
-        Keyword(int tkCode)
+        KeywordEnum(int tkCode)
         {
         code = tkCode;
         }
     }
 
-    enum Separator      //enum (mini class) for separators/delimiters
+    enum SeparatorEnum      //enum (mini class) for separators/delimiters
     {   
         OP_PAREN (201), CL_PAREN (202), SEMICOLON (203), ASSIGN (204), PARAM (205),
         ASSOC (206), DECIMAL (207), RANGE (208), STRING_SEP (209), CHAR_SEP (210);
         private final int code;
-        Separator(int sepCode)
+        SeparatorEnum(int sepCode)
         {
         code = sepCode;
         }
     }
 
-    enum Operator   //enum for operators
+    enum OperatorEnum   //enum for operators
     {
         ADD (301), SUBTR (302), MULT (303), DIVIS (304), CONCAT (305),
         MOD (306), REMAIN (307), EQUAL_TO (308), NOT_EQUAL_TO (309), GREATER (310),
@@ -80,39 +96,37 @@ public class Token
         XOR (316), POW (317), NOT (318), ABS_VAL (319), IN (320),
         NOT_IN (321);
         private final int code;
-        Operator(int opCode)
+        OperatorEnum(int opCode)
         {
         code = opCode;
         }
     }
 
-    enum Literal    //enum for literals
+    enum LiteralEnum    //enum for literals
     {
         LIT_NUM (401), LIT_DEC (402), LIT_CHAR (403), LIT_STRING (404);
         private final int code;
-        Literal(int litCode)
+        LiteralEnum(int litCode)
         {
         code = litCode;
         }
 
     }
 
-    //Token Constructor
-    Token(Enum type, int code, String scanned)
-    {
-        tokenType = type;
-        value = scanned;
-        tokenCode = code;
-        numOfTokens++; 
-        tokenNum = numOfTokens;       
-    }
+    
 
+    /*
+    Maybe this will work?
+    public String getType(){return null;};
+    */
    
 
     //https://stackoverflow.com/questions/7732666/printing-out-characters-in-ada
     //May help with keywords ^^^
 
     //returns list of all tokens
+    
+
     public static List<Token> getTokens(Scanner scan)
     {
         List<Token> tokens = new ArrayList<Token>();
@@ -120,13 +134,15 @@ public class Token
 
         while(scan.hasNext())
         {   
-            /*if(scan.hasNextInt())
+            if(scan.hasNextInt())
             {
                 next = scan.next();
                 System.out.println("Token: " + next);
-                tokens.add(new Token(Literal.LIT_NUM, 401, next));
+                tokens.add(new Literal(401, next));
                 continue;
-            }*/
+            }
+        }
+/*
             next = scan.next();      //each token, starting to think I should scan one character at a time
             
             if(scan.hasNext() == false)     //special cases like literals
@@ -150,7 +166,7 @@ public class Token
                         System.out.println("Token: " + next);
                         tokens.add(new Token(Keyword.IF, 101, next));
                         */
-
+/*
                         // Separators
                     case ":=":
                         System.out.println("Token: " + next);
@@ -178,9 +194,12 @@ public class Token
                 
             }
         }
+        */
         return tokens;
     }
 
+    
+/*    
     public static void printTokens(Scanner scan)
     {
         List<Token> tokens = getTokens(scan);
@@ -193,6 +212,7 @@ public class Token
             System.out.printf("%-15s%-15s%03d%15s%n", x.tokenNum, x.tokenType, x.tokenCode, x.value);
         }
     }
+*/
     
 
     public static void main(String[] args) throws FileNotFoundException
@@ -209,7 +229,7 @@ public class Token
         */
         
         //getTokens(scan);
-        printTokens(scan);
+        //printTokens(scan);
         
         /*File testInput = new File("testInput.txt");
         Scanner test = new Scanner(testInput);
@@ -232,9 +252,60 @@ public class Token
 }
 */
         scan.close();
+
         
         
     }
 
 }
 
+class Type extends Token
+{
+    
+    Type(int code, String scanned)
+    {
+        tokenType = "Type";
+        tokenCode = code;
+        value = scanned;
+    }
+}
+
+class Keyword extends Token
+{
+    Keyword(int code, String scanned)
+    {
+        tokenType = "Keyword";
+        tokenCode = code;
+        value = scanned;
+    }
+}
+
+class Operator extends Token
+{
+    Operator(int code, String scanned)
+    {
+        tokenType = "Operator";
+        tokenCode = code;
+        value = scanned;
+    }
+}
+
+class Separator extends Token
+{
+    Separator(int code, String scanned)
+    {
+        tokenType = "Separator";
+        tokenCode = code;
+        value = scanned;
+    }
+}
+
+class Literal extends Token
+{
+    Literal(int code, String scanned)
+    {
+        tokenType = "Literal";
+        tokenCode = code;
+        value = scanned;
+    }
+}
