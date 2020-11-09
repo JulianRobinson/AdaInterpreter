@@ -169,41 +169,151 @@ public class Token
                 
                 // switch for everything except literals
                 switch (next) {
-                        // Types
+                    // Types
                     case "int":
                         System.out.println("Token: " + next);
                         tokens.add(new Type(001, next));
                         break;
 
-                        // Keywords
+                    case "float":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Type(002, next));
+                        break;
+
+                    case "string":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Type(003, next));
+                        break;
+
+                    case "boolean":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Type(004, next));
+                        break;
+
+                    // Keywords
                     case "if":
                         System.out.println("Token: " + next);
                         tokens.add(new Keyword(101, next));
                         break;
-                        
-                        // Separators
+
+                    case "else":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(102, next));
+                        break;
+
+                    case "then":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(103, next));
+                        break;
+
+                    case "end":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(104, next));
+                        break;
+
+                    case "exit":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(106, next));
+                        break;
+
+                    case "end_if":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(112, next));
+                        break;
+
+                    case "elsif":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(113, next));
+                        break;
+
+                    // Separators
                     case ":=":
                         System.out.println("Token: " + next);
                         tokens.add(new Separator(304, next));
                         break;
+
                     case ";":
                         System.out.println("Token: " + next);
                         tokens.add(new Separator(203, next));
                         break;
+
                     case ":":
                         System.out.println("Token: " + next);
                         tokens.add(new Separator(206, next));
                         break;
-                        // Operators
+
+                    // Operators
                     case "+":
                         System.out.println("Token: " + next);
                         tokens.add(new Operator(301, next));
+                        break;
+                    case "-":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(302, next));
+                        break;
+                    case "*":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(303, next));
+                        break;
+                    case "/":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(304, next));
+                        break;
+                    case "&":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(305, next));
                         break;
                     case "=":
                         System.out.println("Token: " + next);
                         tokens.add(new Operator(308, next));
                         break;
-                
+                    case "/=":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(309, next));
+                        break;
+                    case ">":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(310, next));
+                        break;
+                    case "<":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(311, next));
+                        break;
+                    case ">=":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(312, next));
+                        break;
+                    case "<=":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(313, next));
+                        break;
+
+
+                    // Literals
+                    case "Numeric":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(401, next));
+                        break;
+
+                    case "Decimal":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(402, next));
+                        break;
+
+                    case "Character":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(403, next));
+                        break;
+
+                    case "String":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(404, next));
+                        break;
+
+                    case "Boolean":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Operator(405, next));
+                        break;                
                         
                         // Parser may have to handle determining which strings are identifiers
                         // Also which strings are characters
@@ -249,9 +359,14 @@ public class Token
         File input = new File("AdaInput.txt");
         Scanner scan = new Scanner(input);
 
-        printTokens(scan);
+        //printTokens(scan);
 
-       
+        List<Token >tokens = getTokens(scan);
+
+        Parser p = new Parser(tokens);
+
+        System.out.print(p.parse());
+
         scan.close();
 
         
@@ -320,3 +435,78 @@ class Ident extends Token
         value = scanned;
     }
 }
+
+//Parser
+
+/*class Parser 
+{
+
+    List<Token> tokens;
+    Parser(List<Token> tokenList)
+    {
+        tokens = tokenList;
+    }
+
+    
+    //if token is one character long, try checking if it is an ID
+    boolean isID(Token tok)
+    {
+        if(tok.value.length() == 1)
+        {
+            if(Character.isLetter(tok.value.charAt(0)))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    boolean isInt(Token tok)
+    {
+        if(tok.tokenType == "int")
+            return true;
+        
+        return false;   
+    }
+
+    boolean isType(Token tok)
+    {
+        if(tok.tokenCode > 000 && tok.tokenCode < 005)
+            return true;
+       
+        return false;
+    }
+    
+    String parse()
+    {
+        System.out.println("PARSING... ");
+        int counter = 0;
+        String output = "test ";
+        
+        while(counter < tokens.size())
+        {
+            Token current = tokens.get(counter);
+            if(isType(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+            }
+
+            if(isID(current))
+            {
+                output = output + "<" + current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+            
+            
+            counter++;
+            
+
+        }
+
+        return output;
+    }
+}
+*/
