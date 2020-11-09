@@ -225,11 +225,21 @@ public class Token
                         System.out.println("Token: " + next);
                         tokens.add(new Keyword(113, next));
                         break;
+                    
+                    case "Get":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(114, next));
+                        break;
+                    
+                  	case "Put":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Keyword(115, next));
+                        break;
 
                     // Separators
                     case ":=":
                         System.out.println("Token: " + next);
-                        tokens.add(new Separator(304, next));
+                        tokens.add(new Separator(204, next));
                         break;
 
                     case ";":
@@ -290,12 +300,13 @@ public class Token
 
 
                     // Literals
-                    case "Numeric":
+                /*
+                    case "Integer":
                         System.out.println("Token: " + next);
                         tokens.add(new Operator(401, next));
                         break;
 
-                    case "Decimal":
+                    case "Float":
                         System.out.println("Token: " + next);
                         tokens.add(new Operator(402, next));
                         break;
@@ -309,18 +320,35 @@ public class Token
                         System.out.println("Token: " + next);
                         tokens.add(new Operator(404, next));
                         break;
+                */
 
-                    case "Boolean":
+                    case "true":
                         System.out.println("Token: " + next);
-                        tokens.add(new Operator(405, next));
-                        break;                
+                        tokens.add(new Literal(405, next));
+                        break;    
+                    
+                  	case "false":
+                        System.out.println("Token: " + next);
+                        tokens.add(new Literal(405, next));
+                        break;  
                         
                         // Parser may have to handle determining which strings are identifiers
                         // Also which strings are characters
                     default:
+                    /*try{
+                    		if(Integer.parseInt(next) > Integer.MIN_VALUE && Integer.parseInt(next) < Integer.MAX_VALUE)
+                    		{
+                                 tokens.add(new Literal(401, next));
+                                 break;
+                            }
+                        }
+                        catch(Exception e){System.out.print(e + "\n");}
+                            */
                         System.out.println("Token not recognized (string): " + next);
                         //possibly put string type in default, and have not recognized in special case before/after switch or vice versa
                         tokens.add(new Literal(404, next));
+                    
+                   	
 
                 }
                 
@@ -447,9 +475,266 @@ class Parser
         tokens = tokenList;
     }
 
+  //Types
+    boolean isType(Token tok)
+    {
+        if(tok.tokenCode > 000 && tok.tokenCode < 005)
+            return true;
+       
+        return false;
+    }
+  
+  	boolean isTypeInt(Token tok)
+    {
+     		if(tok.tokenCode == 001)
+          return true;
+      return false;
+    }
+  	
+  	boolean isTypeFloat(Token tok)
+    {
+     		if(tok.tokenCode == 002)
+          return true;
+      return false;
+    }
+  	
+  	boolean isTypeString(Token tok)
+    {
+     		if(tok.tokenCode == 003)
+          return true;
+      return false;
+    }
+  
+  	boolean isTypeBool(Token tok)
+    {
+     		if(tok.tokenCode == 004)
+          return true;
+      return false;
+    }
     
-    //if token is one character long, try checking if it is an ID
-    boolean isID(Token tok)
+  //Keywords
+  	boolean isKeyword(Token tok)
+    {
+     		 if(tok.tokenCode > 100 && tok.tokenCode < 117)
+            return true;
+       
+        return false;
+    }
+  
+  	boolean isIf(Token tok)
+    {
+     			if(tok.tokenCode == 101)
+            return true;
+      
+      	return false;
+    }
+  
+  	boolean isElse(Token tok)
+    {
+     			if(tok.tokenCode == 102)
+            return true;
+      	return false;
+    }
+  
+  	boolean isThen(Token tok)
+    {
+     			if(tok.tokenCode == 103)
+            return true;
+      	return false;
+    }
+  
+  	boolean isEnd(Token tok)
+    {
+     			if(tok.tokenCode == 104)
+            return true;
+      	return false;
+    }
+  
+  	boolean isExit(Token tok)
+    {
+     			if(tok.tokenCode == 106)
+            return true;
+      	return false;
+    }
+  
+  	boolean isEndIf(Token tok)
+    {
+     			if(tok.tokenCode == 112)
+            return true;
+      	return false;
+    }
+  
+  	boolean isElsIf(Token tok)
+    {
+     			if(tok.tokenCode == 113)
+            return true;
+      	return false;
+    }
+  
+  	boolean isGet(Token tok)
+    {
+     			if(tok.tokenCode == 114)
+            return true;
+      	return false;
+    }
+  
+  	boolean isPut(Token tok)
+    {
+     			if(tok.tokenCode == 115)
+            return true;
+      	return false;
+    }
+  
+  // Separators
+  	boolean isSeparator(Token tok) {
+					if (tok.tokenCode == 203 || tok.tokenCode == 204 || tok.tokenCode == 206)
+            return true;
+      return false;
+    }
+  
+  	boolean isEndLine(Token tok) {
+					if (tok.tokenCode == 203)
+            return true;
+      return false;
+    }
+  
+  	boolean isAssignment(Token tok) {
+					if (tok.tokenCode == 204)
+            return true;
+      return false;
+    }
+  
+   	boolean isAssociation(Token tok) {
+					if (tok.tokenCode == 206)
+            return true;
+      return false;
+    }
+  
+  // Operators
+    boolean isOperator(Token tok) {
+					if ((tok.tokenCode >= 301 && tok.tokenCode <= 305) || (tok.tokenCode >= 308 && tok.tokenCode <= 313))
+            return true;
+      return false;
+    }
+  
+    boolean isAddition(Token tok) {
+					if (tok.tokenCode == 301)
+            return true;
+      return false;
+    }
+  
+    boolean isSubtraction(Token tok) {
+					if (tok.tokenCode == 302)
+            return true;
+      return false;
+    }
+  
+    boolean isMultiplication(Token tok) {
+					if (tok.tokenCode == 303)
+            return true;
+      return false;
+    }
+  
+    boolean isDivision(Token tok) {
+					if (tok.tokenCode == 304)
+            return true;
+      return false;
+    }
+  
+    boolean isConcatenate(Token tok) {
+					if (tok.tokenCode == 305)
+            return true;
+      return false;
+    }
+  
+    boolean isEqualTo(Token tok) {
+					if (tok.tokenCode == 308)
+            return true;
+      return false;
+    }
+  
+    boolean isNotEqualTo(Token tok) {
+					if (tok.tokenCode == 309)
+            return true;
+      return false;
+    }
+  
+    boolean isGreaterThan(Token tok) {
+					if (tok.tokenCode == 310)
+            return true;
+      return false;
+    }
+  
+    boolean isLessThan(Token tok) {
+					if (tok.tokenCode == 311)
+            return true;
+      return false;
+    }
+  
+    boolean isGreaterThanOrEqualTo(Token tok) {
+					if (tok.tokenCode == 312)
+            return true;
+      return false;
+    }
+  
+    boolean isLessThanOrEqualTo(Token tok) {
+					if (tok.tokenCode == 313)
+            return true;
+      return false;
+    }
+		
+  //Literals
+  	boolean isLiteral(Token tok)
+    {
+     		if(tok.tokenCode >= 401 && tok.tokenCode <= 405)
+            return true;
+        
+        return false;  
+    }
+  
+    boolean isInteger(Token tok)
+    {
+        if(tok.tokenCode == 401)
+            return true;
+        
+        return false;   
+    }
+  
+  	boolean isFloat(Token tok)
+    {
+        if(tok.tokenCode == 402)
+            return true;
+        
+        return false;   
+    }
+  
+  	boolean isCharacter(Token tok)
+    {
+        if(tok.tokenCode == 403)
+            return true;
+        
+        return false;   
+    }
+  
+  	boolean isString(Token tok)
+    {
+        if(tok.tokenCode == 404)
+            return true;
+        
+        return false;   
+    }
+  
+  	boolean isBoolean(Token tok)
+    {
+        if(tok.tokenCode == 405)
+            return true;
+        
+        return false;   
+    }
+	
+  	//IDs
+  	//if token is one character long, try checking if it is an ID
+  	boolean isID(Token tok)
     {
         if(tok.value.length() == 1)
         {
@@ -461,38 +746,78 @@ class Parser
         
         return false;
     }
-
-    boolean isInt(Token tok)
-    {
-        if(tok.tokenType == "int")
-            return true;
-        
-        return false;   
-    }
-
-    boolean isType(Token tok)
-    {
-        if(tok.tokenCode > 000 && tok.tokenCode < 005)
-            return true;
-       
-        return false;
-    }
     
     String parse()
     {
         System.out.println("PARSING... ");
         int counter = 0;
-        String output = "test ";
+        String output = "";
         
         while(counter < tokens.size())
         {
             Token current = tokens.get(counter);
-            if(isType(current))
+          //Types
+            if(isTypeInt(current))
             {
                 output = output + "<"+ current.tokenType + "> ";
                 counter++;
+                continue;
+            }
+          
+          	if(isTypeString(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
             }
 
+          //Keywords
+          if(isKeyword(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
+          
+          //Separators
+          	if(isEndLine(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
+          	if(isAssociation(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
+          	if(isAssignment(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
+          //Operators
+          	if(isAddition(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
+          //Literals
+          	if(isLiteral(current))
+            {
+                output = output + "<"+ current.tokenType + "> ";
+                counter++;
+                continue;
+            }
+          
             if(isID(current))
             {
                 output = output + "<" + current.tokenType + "> ";
