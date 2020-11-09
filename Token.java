@@ -438,7 +438,7 @@ class Ident extends Token
 
 //Parser
 
-/*class Parser 
+class Parser 
 {
 
     List<Token> tokens;
@@ -509,4 +509,3 @@ class Ident extends Token
         return output;
     }
 }
-*/
