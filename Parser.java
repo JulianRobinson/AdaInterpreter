@@ -389,12 +389,12 @@ public class Parser
 
         // Go through the input_token_list and look for semicolons (tokenCode 203)
         // When one is found, stop adding to the first_half list and start adding to the second_half list.
-        
 
-         
+
+
         boolean switch_boolean = true;
         for (Token x: input_token_list) {
-            
+
             if (switch_boolean) {
                 first_half.add(x);
             } else {
@@ -405,42 +405,57 @@ public class Parser
                 switch_boolean = false;
             }
         }
-        
+
+        // Print output
+        if (!(second_half.size() == 0)) {
+            System.out.println("<stmt_list> -> <stmt> ; <stmt_list>");
+        } else {
+            System.out.println("<stmt_list> -> <stmt> ;");
+        }
+
         //EOF
         if(!(first_half.size() == 0))
         {
-        
-        
+
+
         /*
         System.out.println("First Half: ");
         this.printList(first_half);
         System.out.println("Second Half: ");
         this.printList(second_half);
         */
-        
 
-        // Check if first_half is an <assoc>
-        //printList(first_half);
-        checkAssoc(first_half);
-        
 
-        // Recursive call for second_half if it's not null
-        if (second_half != null) {
-            parseRewritten(second_half);
+            // Check if first_half is an <assoc>
+            //printList(first_half);
+            if (checkAssoc(first_half)) {
+
+            } else if (checkAssign(first_half)) {
+
+            } else if (checkExpr(first_half)) {
+
+            }
+
+
+            // Recursive call for second_half if it's not null
+            if (!(second_half.size() == 0)) {
+                parseRewritten(second_half);
+            }
         }
-    }
     }
 
     public boolean checkAssoc(List<Token> input_token_list) {
         // <assoc> -> <type> : <id> | <type> : <assign>
 
-        // Makes sure the first token is a <type>
-        if(input_token_list.size() == 0)
+        if (input_token_list.size() == 0)
         {
             return false;
         }
-        System.out.println("Size of input: " + input_token_list.size());
-        System.out.println("At index 0: " + input_token_list.get(0));
+
+        //System.out.println("Size of input: " + input_token_list.size());
+        //System.out.println("At index 0: " + input_token_list.get(0));
+
+        // Makes sure the first token is a <type>
         if (!checkType(input_token_list.get(0))) {
             return false;
         }
@@ -454,6 +469,52 @@ public class Parser
         List<Token> sublist = input_token_list.subList(2, input_token_list.size() - 1);
         if (!(checkId(input_token_list.get(2))) && !(checkAssign(sublist))) {
             return false;
+        }
+
+        // At this point we know it is an <assoc> so we print
+        System.out.println("<stmt> -> <assoc>");
+
+        if (checkAssign(sublist)) { // If the third token and on is an <assign>
+            System.out.println("<assoc> -> <type> : <assign>");
+
+            // Print what <type> is
+            int tokenCode = input_token_list.get(0).tokenCode;
+            if (tokenCode == 1) {
+                System.out.println("<type> -> int");
+            } else if (tokenCode == 2) {
+                System.out.println("<type> -> float");
+            } else if (tokenCode == 3) {
+                System.out.println("<type> -> string");
+            } else if (tokenCode == 4) {
+                System.out.println("<type> -> boolean");
+            }
+
+            // If it's an <assign>, print what is goes to.
+            System.out.println("<assign> -> <id> := <expr>");
+            System.out.println("<id> -> " + sublist.get(0).value);
+
+            // TODO
+            // Check the <expr> and print it
+            List<Token> expr_list = input_token_list.subList(4, input_token_list.size() - 1);
+            printExpr(expr_list);
+
+        } else if (checkId(input_token_list.get(2))) { // If the third token is an <id>
+            System.out.println("<assoc> -> <type> : <id>");
+
+            // Print what <type> is
+            int tokenCode = sublist.get(0).tokenCode;
+            if (tokenCode == 1) {
+                System.out.println("<type> -> int");
+            } else if (tokenCode == 2) {
+                System.out.println("<type> -> float");
+            } else if (tokenCode == 3) {
+                System.out.println("<type> -> string");
+            } else if (tokenCode == 4) {
+                System.out.println("<type> -> boolean");
+            }
+
+            // Print what <id> is
+            System.out.println("<id> -> " + input_token_list.get(2).value);
         }
 
         return true;
@@ -486,7 +547,7 @@ public class Parser
         }
 
         // Makes sure the last section is an <expr>
-        List<Token> sublist = input_token_list.subList(2, input_token_list.size() - 1);
+        List<Token> sublist = input_token_list.subList(2, input_token_list.size());
         if (!(checkExpr(sublist))) {
             return false;
         }
@@ -494,7 +555,6 @@ public class Parser
         return true;
     }
 
-    // TODO
     // Returns true if the list of tokens is an <expr>
     public boolean checkExpr(List<Token> input_token_list) {
         // Makes sure lists of only 1 token contain either an <id> or a <literal>
@@ -534,5 +594,50 @@ public class Parser
         }
 
         return true; // If all checks pass, return true
+    }
+
+    public void printExpr(List<Token> expr_list) {
+        if (expr_list.size() == 1) {
+            if (expr_list.get(0).tokenCode == 404) {
+                System.out.println("<expr> -> <id>");
+                System.out.println("<id> -> " + expr_list.get(0).value);
+            } else {
+                System.out.println("<expr> -> <literal>");
+                System.out.println("<literal> -> " + expr_list.get(0).value);
+            }
+        } else { // If <expr> is longer than 1 token.
+            // Check for the operator
+            if (expr_list.get(1).tokenCode == 301) { // If operator is a "+"
+                System.out.println("<expr> -> <expr> + <expr>");
+            } else if (expr_list.get(1).tokenCode == 302) { // If operator is a "-"
+                System.out.println("<expr> -> <expr> - <expr>");
+            } else if (expr_list.get(1).tokenCode == 303) { // If operator is a "*"
+                System.out.println("<expr> -> <expr> * <expr>");
+            } else if (expr_list.get(1).tokenCode == 304) { // If operator is a "/"
+                System.out.println("<expr> -> <expr> / <expr>");
+            }
+
+            // Create two new lists and split them at the operators. Then print the lists
+            List<Token> first_sub_expr_list = new ArrayList<Token>();
+            List<Token> second_sub_expr_list = new ArrayList<Token>();
+            boolean switch_boolean = true;
+            boolean operator_found = false;
+            for (Token x : expr_list) {
+                if (!operator_found && (x.tokenCode >= 301 && x.tokenCode <= 304)) {
+                    operator_found = true;
+                    switch_boolean = false;
+                    continue;
+                }
+
+                if (switch_boolean) {
+                    first_sub_expr_list.add(x);
+                } else {
+                    second_sub_expr_list.add(x);
+                }
+            }
+
+            printExpr(first_sub_expr_list);
+            printExpr(second_sub_expr_list);
+        }
     }
 }
